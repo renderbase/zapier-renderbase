@@ -216,9 +216,9 @@ This project is structurally sound!
 
 ### 1. Access the Developer Platform
 
-1. Go to [developer.zapier.com](https://developer.zapier.com)
+1. Go to [zapier.com/developer-platform](https://zapier.com/developer-platform)
 2. Sign in with your Zapier account
-3. Click "Start a Zapier Integration" or select your existing app
+3. Click "Start a Zapier Integration" or select your existing integration
 
 ### 2. Configure App Information
 
@@ -237,7 +237,7 @@ In the Zapier Developer Platform:
 
 ### 3. Configure Branding
 
-- **Primary Color:** #F97316 (Renderbase orange)
+- **Primary Color:** #8B5CF6 (Renderbase violet)
 - **Homepage URL:** https://renderbase.dev
 - **Support URL:** https://renderbase.dev/support
 - **Documentation URL:** https://docs.renderbase.dev/integrations/zapier
@@ -334,20 +334,23 @@ zapier invoke auth:test
 ### 3. Test Individual Actions
 
 ```bash
-# Test generating a PDF
-zapier invoke creates:generate_pdf
+# Test generating a PDF (interactive mode)
+zapier invoke create generate_pdf
 
 # Test generating Excel
-zapier invoke creates:generate_excel
+zapier invoke create generate_excel
 
 # Test batch generation
-zapier invoke creates:generate_batch
+zapier invoke create generate_batch
 
 # Test finding a document job
-zapier invoke searches:find_document_job
+zapier invoke search find_document_job
 
 # Test a trigger
-zapier invoke triggers:document_completed
+zapier invoke trigger document_completed
+
+# Test with input data
+zapier invoke create generate_pdf --inputData '{"templateId": "your-template-id"}'
 ```
 
 ### 4. Test Dynamic Fields
@@ -500,8 +503,9 @@ zapier deprecate 1.0.0 2026-06-01
 
 ### Getting Help
 
-- **Zapier Documentation:** https://platform.zapier.com/docs
-- **Zapier CLI Reference:** https://github.com/zapier/zapier-platform/tree/main/packages/cli
+- **Zapier Documentation:** https://docs.zapier.com/platform
+- **Zapier CLI Reference:** https://docs.zapier.com/platform/reference/cli
+- **Zapier GitHub:** https://github.com/zapier/zapier-platform
 - **Renderbase Support:** support@renderbase.dev
 - **Renderbase Docs:** https://docs.renderbase.dev/integrations/zapier
 
@@ -513,23 +517,31 @@ zapier deprecate 1.0.0 2026-06-01
 
 ```bash
 zapier login           # Authenticate with Zapier
-zapier register        # Create new app
-zapier link            # Link to existing app
-zapier validate        # Validate integration
-zapier build           # Build integration package
-zapier test            # Run tests
+zapier register        # Create new integration
+zapier link            # Link to existing integration
+zapier validate        # Validate integration structure
+zapier build           # Build deployable zip file
+zapier test            # Run test suite
 zapier push            # Deploy to Zapier
-zapier promote         # Promote version
-zapier versions        # List versions
-zapier logs            # View recent logs
+zapier promote         # Promote version to production
+zapier deprecate       # Mark version as deprecated
+zapier migrate         # Migrate users between versions
+zapier versions        # List all versions
+zapier logs            # View execution logs
+zapier invoke          # Test triggers/actions locally
 zapier users:add       # Invite beta testers
+zapier users:get       # List users with access
+zapier team:add        # Add team members
 zapier env:set         # Set environment variables
+zapier env:get         # Get environment variables
+zapier describe        # Show triggers, searches, creates
 ```
 
 ### Important URLs
 
-- Developer Platform: https://developer.zapier.com
-- CLI Documentation: https://platform.zapier.com/cli
+- Developer Platform: https://zapier.com/developer-platform
+- CLI Documentation: https://docs.zapier.com/platform/reference/cli
+- CLI GitHub Repository: https://github.com/zapier/zapier-platform
 - Renderbase API Docs: https://docs.renderbase.dev/api-reference
 - Renderbase OAuth Docs: https://docs.renderbase.dev/developer-guide/oauth
 
