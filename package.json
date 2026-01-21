@@ -1,0 +1,37 @@
+{
+  "name": "zapier-renderbase",
+  "version": "1.0.0",
+  "description": "Renderbase integration for Zapier - Generate PDF and Excel documents from templates",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --testTimeout 10000",
+    "lint": "eslint src --ext .js",
+    "validate": "zapier validate",
+    "build": "zapier build",
+    "push": "zapier push",
+    "test:auth": "zapier test --auth-only"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "zapier-platform-core": "18.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "keywords": [
+    "zapier",
+    "renderbase",
+    "pdf",
+    "excel",
+    "document-generation",
+    "template",
+    "automation"
+  ],
+  "author": "Renderbase",
+  "license": "MIT",
+  "private": true
+}
