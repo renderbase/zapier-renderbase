@@ -34,9 +34,37 @@ const fetchTemplates = async (z, format) => {
 };
 
 /**
+ * Team selection field - first in the cascade
+ */
+const teamField = {
+  key: 'teamId',
+  label: 'Team',
+  type: 'string',
+  required: true,
+  dynamic: 'team_list.id.name',
+  altersDynamicFields: true,
+  helpText: 'Select a team from your Renderbase account.',
+};
+
+/**
+ * Workspace selection field - second in the cascade, filtered by team
+ */
+const workspaceField = {
+  key: 'workspaceId',
+  label: 'Workspace',
+  type: 'string',
+  required: true,
+  dynamic: 'workspace_list.id.name',
+  altersDynamicFields: true,
+  helpText: 'Select a workspace within the selected team.',
+};
+
+/**
  * Common input fields for document generation
  */
 const commonDocumentFields = [
+  teamField,
+  workspaceField,
   {
     key: 'templateId',
     label: 'Template',
@@ -44,7 +72,7 @@ const commonDocumentFields = [
     required: true,
     dynamic: 'template_list.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a template from your Renderbase account.',
+    helpText: 'Select a template from the selected workspace.',
   },
   {
     key: 'variables',
@@ -75,6 +103,8 @@ const commonDocumentFields = [
  * PDF-specific input fields
  */
 const pdfFields = [
+  teamField,
+  workspaceField,
   {
     key: 'templateId',
     label: 'PDF Template',
@@ -82,7 +112,7 @@ const pdfFields = [
     required: true,
     dynamic: 'template_list_pdf.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a PDF template from your Renderbase account.',
+    helpText: 'Select a PDF template from the selected workspace.',
   },
   {
     key: 'variables',
@@ -113,6 +143,8 @@ const pdfFields = [
  * Excel-specific input fields
  */
 const excelFields = [
+  teamField,
+  workspaceField,
   {
     key: 'templateId',
     label: 'Excel Template',
@@ -120,7 +152,7 @@ const excelFields = [
     required: true,
     dynamic: 'template_list_excel.id.name',
     altersDynamicFields: true,
-    helpText: 'Select an Excel template from your Renderbase account.',
+    helpText: 'Select an Excel template from the selected workspace.',
   },
   {
     key: 'variables',
@@ -151,6 +183,8 @@ const excelFields = [
  * Batch generation input fields
  */
 const batchFields = [
+  teamField,
+  workspaceField,
   {
     key: 'templateId',
     label: 'Template',
@@ -158,7 +192,7 @@ const batchFields = [
     required: true,
     dynamic: 'template_list.id.name',
     altersDynamicFields: true,
-    helpText: 'Select a template from your Renderbase account.',
+    helpText: 'Select a template from the selected workspace.',
   },
   {
     key: 'format',
@@ -217,6 +251,8 @@ const parseVariables = (variablesString) => {
 const buildDocumentPayload = (bundle, format = null) => {
   const payload = {
     templateId: bundle.inputData.templateId,
+    teamId: bundle.inputData.teamId,
+    workspaceId: bundle.inputData.workspaceId,
   };
 
   // Set format if provided
@@ -235,7 +271,7 @@ const buildDocumentPayload = (bundle, format = null) => {
 
   // Optional fields
   if (bundle.inputData.fileName) {
-    payload.fileName = bundle.inputData.fileName;
+    payload.filename = bundle.inputData.fileName;
   }
 
   if (bundle.inputData.waitForCompletion !== undefined) {
@@ -261,6 +297,8 @@ const buildBatchPayload = (bundle) => {
     templateId: bundle.inputData.templateId,
     format: bundle.inputData.format,
     documents,
+    teamId: bundle.inputData.teamId,
+    workspaceId: bundle.inputData.workspaceId,
   };
 
   if (bundle.inputData.waitForCompletion !== undefined) {

@@ -5,25 +5,41 @@
  * Used to power the PDF template dropdown in Generate PDF action.
  */
 
-const { TEMPLATES_ENDPOINT } = require('../lib/config');
+const { INTEGRATION_API_ENDPOINT } = require('../lib/config');
 
-const perform = async (z) => {
+const perform = async (z, bundle) => {
+  const params = {};
+
+  // Filter by workspace if specified
+  if (bundle.inputData.workspaceId) {
+    params.workspaceId = bundle.inputData.workspaceId;
+  }
+
+  // Filter by team if specified (fallback if no workspace)
+  if (bundle.inputData.teamId) {
+    params.teamId = bundle.inputData.teamId;
+  }
+
   const response = await z.request({
-    url: TEMPLATES_ENDPOINT,
+    url: `${INTEGRATION_API_ENDPOINT}/templates`,
     method: 'GET',
-    params: {
-      limit: 100,
-      format: 'pdf',
-    },
+    params,
   });
 
-  const templates = response.data.data || [];
+  const templates = response.data || [];
 
-  return templates.map((template) => ({
-    id: template.id,
-    name: template.name,
+  // Filter to only show templates that support PDF output
+  const pdfTemplates = templates.filter(
+    (t) => t.outputFormats && t.outputFormats.includes('pdf')
+  );
+
+  return pdfTemplates.map((template) => ({
+    id: template.shortId,
+    name: `${template.name} (${template.workspaceName})`,
+    workspaceId: template.workspaceId,
+    workspaceName: template.workspaceName,
+    teamId: template.teamId,
     description: template.description || '',
-    updatedAt: template.updatedAt,
   }));
 };
 
@@ -40,20 +56,39 @@ module.exports = {
   operation: {
     perform,
 
-    inputFields: [],
+    inputFields: [
+      {
+        key: 'workspaceId',
+        label: 'Workspace',
+        type: 'string',
+        required: false,
+        helpText: 'Filter templates by workspace.',
+      },
+      {
+        key: 'teamId',
+        label: 'Team',
+        type: 'string',
+        required: false,
+        helpText: 'Filter templates by team (used if workspace is not specified).',
+      },
+    ],
 
     sample: {
-      id: 'tmpl_pdf123',
-      name: 'Invoice Template',
+      id: 'atpl_pdf123',
+      name: 'Invoice Template (Marketing)',
+      workspaceId: 'ws_xyz789',
+      workspaceName: 'Marketing',
+      teamId: 'team_abc123',
       description: 'Standard invoice PDF template',
-      updatedAt: '2025-01-10T15:30:00Z',
     },
 
     outputFields: [
       { key: 'id', label: 'Template ID', type: 'string' },
       { key: 'name', label: 'Template Name', type: 'string' },
+      { key: 'workspaceId', label: 'Workspace ID', type: 'string' },
+      { key: 'workspaceName', label: 'Workspace Name', type: 'string' },
+      { key: 'teamId', label: 'Team ID', type: 'string' },
       { key: 'description', label: 'Description', type: 'string' },
-      { key: 'updatedAt', label: 'Last Updated', type: 'datetime' },
     ],
   },
 };

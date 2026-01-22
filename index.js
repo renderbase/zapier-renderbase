@@ -21,6 +21,8 @@ const generateBatch = require('./src/creates/generate_batch');
 
 // Searches
 const findDocumentJob = require('./src/searches/find_document_job');
+const teamList = require('./src/searches/team_list');
+const workspaceList = require('./src/searches/workspace_list');
 const templateList = require('./src/searches/template_list');
 const templateListPdf = require('./src/searches/template_list_pdf');
 const templateListExcel = require('./src/searches/template_list_excel');
@@ -78,7 +80,9 @@ module.exports = {
     [documentCompleted.key]: documentCompleted,
     [documentFailed.key]: documentFailed,
     [batchCompleted.key]: batchCompleted,
-    // Hidden triggers for dynamic dropdowns
+    // Hidden triggers for dynamic dropdowns (cascading: team -> workspace -> template)
+    [teamList.key]: teamList,
+    [workspaceList.key]: workspaceList,
     [templateList.key]: templateList,
     [templateListPdf.key]: templateListPdf,
     [templateListExcel.key]: templateListExcel,

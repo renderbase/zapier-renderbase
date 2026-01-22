@@ -22,6 +22,9 @@ const DOCUMENTS_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/documents`;
 // Templates endpoint
 const TEMPLATES_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/templates`;
 
+// Integration API endpoint (for teams, workspaces, templates with filtering)
+const INTEGRATION_API_ENDPOINT = `${API_BASE_URL}/${API_VERSION}/integration-api`;
+
 // OAuth scopes required for full functionality
 const REQUIRED_SCOPES = [
   'documents:generate',
@@ -46,6 +49,7 @@ module.exports = {
   WEBHOOKS_ENDPOINT,
   DOCUMENTS_ENDPOINT,
   TEMPLATES_ENDPOINT,
+  INTEGRATION_API_ENDPOINT,
   REQUIRED_SCOPES,
   WEBHOOK_EVENTS,
 };

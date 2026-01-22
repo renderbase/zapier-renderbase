@@ -6,32 +6,37 @@
  * for the template selection fields in Generate Document actions.
  */
 
-const { TEMPLATES_ENDPOINT } = require('../lib/config');
+const { INTEGRATION_API_ENDPOINT } = require('../lib/config');
 
 const perform = async (z, bundle) => {
-  const params = {
-    limit: 100,
-  };
+  const params = {};
 
-  // Filter by format if specified
-  if (bundle.inputData.format) {
-    params.format = bundle.inputData.format;
+  // Filter by workspace if specified
+  if (bundle.inputData.workspaceId) {
+    params.workspaceId = bundle.inputData.workspaceId;
+  }
+
+  // Filter by team if specified (fallback if no workspace)
+  if (bundle.inputData.teamId) {
+    params.teamId = bundle.inputData.teamId;
   }
 
   const response = await z.request({
-    url: TEMPLATES_ENDPOINT,
+    url: `${INTEGRATION_API_ENDPOINT}/templates`,
     method: 'GET',
     params,
   });
 
-  const templates = response.data.data || [];
+  const templates = response.data || [];
 
   return templates.map((template) => ({
-    id: template.id,
-    name: template.name,
-    format: template.format,
+    id: template.shortId,
+    name: `${template.name} (${template.workspaceName})`,
+    workspaceId: template.workspaceId,
+    workspaceName: template.workspaceName,
+    teamId: template.teamId,
     description: template.description || '',
-    updatedAt: template.updatedAt,
+    outputFormats: template.outputFormats || ['pdf'],
   }));
 };
 
@@ -50,32 +55,39 @@ module.exports = {
 
     inputFields: [
       {
-        key: 'format',
-        label: 'Template Format',
+        key: 'workspaceId',
+        label: 'Workspace',
         type: 'string',
         required: false,
-        choices: {
-          pdf: 'PDF Templates',
-          excel: 'Excel Templates',
-        },
-        helpText: 'Filter templates by format.',
+        helpText: 'Filter templates by workspace.',
+      },
+      {
+        key: 'teamId',
+        label: 'Team',
+        type: 'string',
+        required: false,
+        helpText: 'Filter templates by team (used if workspace is not specified).',
       },
     ],
 
     sample: {
-      id: 'tmpl_abc123',
-      name: 'Invoice Template',
-      format: 'pdf',
+      id: 'atpl_abc123',
+      name: 'Invoice Template (Marketing)',
+      workspaceId: 'ws_xyz789',
+      workspaceName: 'Marketing',
+      teamId: 'team_abc123',
       description: 'Standard invoice template',
-      updatedAt: '2025-01-10T15:30:00Z',
+      outputFormats: ['pdf', 'excel'],
     },
 
     outputFields: [
       { key: 'id', label: 'Template ID', type: 'string' },
       { key: 'name', label: 'Template Name', type: 'string' },
-      { key: 'format', label: 'Template Format', type: 'string' },
+      { key: 'workspaceId', label: 'Workspace ID', type: 'string' },
+      { key: 'workspaceName', label: 'Workspace Name', type: 'string' },
+      { key: 'teamId', label: 'Team ID', type: 'string' },
       { key: 'description', label: 'Description', type: 'string' },
-      { key: 'updatedAt', label: 'Last Updated', type: 'datetime' },
+      { key: 'outputFormats', label: 'Output Formats', type: 'string' },
     ],
   },
 };
